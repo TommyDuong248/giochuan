@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f6cbd">
+<title>Giờ Chuẩn — Tính giờ chuẩn giảng dạy</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Giờ Chuẩn">
+<style>
+:root{
+  --primary:#0f6cbd; --primary-dark:#0a4f8f; --bg:#f4f6f9; --card:#ffffff;
+  --text:#1a2433; --muted:#64748b; --border:#e2e8f0; --green:#15803d;
+  --red:#b91c1c; --amber:#b45309; --radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.45;padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+header{background:var(--primary);color:#fff;padding:12px 16px;position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px}
+header h1{font-size:17px;font-weight:600;flex:1}
+header select{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:5px 8px;font-size:13px}
+header select option{color:#1a2433}
+main{max-width:860px;margin:0 auto;padding:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.card h2{font-size:15px;margin-bottom:10px;color:var(--primary-dark)}
+.card h3{font-size:14px;margin:10px 0 6px}
+.muted{color:var(--muted);font-size:13px}
+.btn{display:inline-flex;align-items:center;gap:6px;background:var(--primary);color:#fff;border:none;border-radius:8px;padding:9px 14px;font-size:14px;font-weight:500;cursor:pointer}
+.btn:active{background:var(--primary-dark)}
+.btn.secondary{background:#eef2f7;color:var(--text);border:1px solid var(--border)}
+.btn.danger{background:#fee2e2;color:var(--red);border:1px solid #fecaca}
+.btn.small{padding:5px 10px;font-size:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.right{margin-left:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:8px 6px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.02em}
+td.num,th.num{text-align:right;white-space:nowrap}
+.tablewrap{overflow-x:auto}
+.empty{padding:24px;text-align:center;color:var(--muted)}
+label{display:block;font-size:13px;font-weight:600;margin:10px 0 4px;color:#334155}
+input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:15px;background:#fff;color:var(--text)}
+input:focus,select:focus{outline:2px solid var(--primary);outline-offset:0;border-color:var(--primary)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 12px}
+@media(max-width:520px){.grid3{grid-template-columns:1fr 1fr}}
+.check{display:flex;align-items:center;gap:8px;font-weight:400;margin:8px 0}
+.check input{width:auto}
+dialog{border:none;border-radius:14px;padding:0;width:min(560px,calc(100vw - 24px));max-height:88vh}
+dialog::backdrop{background:rgba(15,23,42,.5)}
+.dlg-head{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff;z-index:2}
+.dlg-head b{font-size:16px}
+.dlg-body{padding:4px 16px 16px;overflow-y:auto}
+.dlg-foot{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--border);position:sticky;bottom:0;background:#fff}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);display:flex;z-index:30;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border:none;padding:8px 2px 6px;font-size:11px;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button.active{color:var(--primary);font-weight:600}
+nav button svg{width:22px;height:22px}
+.stat{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--border);font-size:14px}
+.stat:last-child{border-bottom:none}
+.stat b.ok{color:var(--green)} .stat b.bad{color:var(--red)}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11.5px;font-weight:600}
+.badge.green{background:#dcfce7;color:var(--green)}
+.badge.red{background:#fee2e2;color:var(--red)}
+.badge.blue{background:#dbeafe;color:var(--primary-dark)}
+.badge.amber{background:#fef3c7;color:var(--amber)}
+.note{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:8px;padding:9px 12px;font-size:13px;margin:8px 0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0}
+.kpi{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:10px}
+.kpi .v{font-size:20px;font-weight:700} .kpi .l{font-size:12px;color:var(--muted)}
+.kpi.green .v{color:var(--green)} .kpi.red .v{color:var(--red)} .kpi.blue .v{color:var(--primary-dark)}
+.preview{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 12px;margin-top:12px;font-size:14px}
+.preview b{color:var(--primary-dark)}
+.actions{white-space:nowrap}
+.actions button{background:none;border:none;cursor:pointer;font-size:16px;padding:4px}
+@media print{
+  header,nav,.no-print{display:none!important}
+  body{background:#fff;padding:0}
+  .card{border:none;page-break-inside:avoid}
+  main{max-width:100%}
+}
+</style>
+</head>
+<body>
+<header>
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#fff" stroke-width="2"/><path d="M12 6v6l4 2" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+  <h1>Giờ Chuẩn Giảng Dạy</h1>
+  <select id="selNamHoc" title="Năm học"></select>
+</header>
+<main id="app"></main>
+<nav id="nav"></nav>
+<dialog id="dlg"></dialog>
+
+<script>
+'use strict';
+/* ====================== DANH MỤC & HẰNG SỐ ====================== */
+const CHUC_DANH = {
+  GV_HANG_I: 'Giảng viên cao cấp (Hạng I)',
+  GV_HANG_II: 'Giảng viên chính (Hạng II)',
+  GV_HANG_III: 'Giảng viên (Hạng III)',
+  TRO_GIANG: 'Trợ giảng'
+};
+const TRINH_DO = { TIEN_SI: 'Tiến sĩ', THAC_SI: 'Thạc sĩ', KHAC: 'Khác' };
+const NHOM = {
+  GIANG_DAY_KHAC: 'Giảng dạy khác / Hướng dẫn',
+  HOI_DONG: 'Hội đồng',
+  NCKH: 'Nghiên cứu khoa học',
+  NHIEM_VU_KHAC: 'Nhiệm vụ khác'
+};
+
+const SEED_DINH_MUC = [
+  ['GV_HANG_I','TIEN_SI',200,250],
+  ['GV_HANG_II','TIEN_SI',240,210],
+  ['GV_HANG_III','TIEN_SI',280,170],
+  ['GV_HANG_III','THAC_SI',300,150],
+  ['GV_HANG_III','KHAC',100,50],
+  ['TRO_GIANG','THAC_SI',80,40]
+].map((r,i)=>({id:i+1, chucDanh:r[0], trinhDo:r[1], gioGD:r[2], gioNCKH:r[3], nam:'2025-2026'}));
+
+const SEED_HE_SO = [
+  {id:1,tu:0,den:40,heSo:1.0},{id:2,tu:41,den:50,heSo:1.1},{id:3,tu:51,den:60,heSo:1.2},
+  {id:4,tu:61,den:70,heSo:1.3},{id:5,tu:71,den:80,heSo:1.4},{id:6,tu:81,den:null,heSo:1.5}
+];
+
+/* [nhóm, mã, tên, đơn vị tính, giờ quy đổi, cần tỷ lệ đóng góp, ghi chú] */
+const SEED_HOAT_DONG = [
+['GIANG_DAY_KHAC','HD_SV_NCKH_CAP_TRUONG','Hướng dẫn sinh viên làm đề tài NCKH cấp Trường trở lên, nghiệm thu đạt','Đề tài',20,false,'20 GC / đề tài'],
+['GIANG_DAY_KHAC','HD_THUC_TAP_THUC_TE','Hướng dẫn sinh viên thực hiện học phần thực tập thực tế','Sinh viên',2,false,'02 GC / sinh viên'],
+['GIANG_DAY_KHAC','HD_CHUYEN_DE_DO_AN_MON_HOC','Hướng dẫn sinh viên thực hiện chuyên đề / đồ án môn học','Sinh viên',1.2,false,'1,2 GC / sinh viên'],
+['GIANG_DAY_KHAC','HD_THUC_TAP_TOT_NGHIEP','Hướng dẫn và chấm thứ I báo cáo thực tập tốt nghiệp đại học','Báo cáo',7,false,'07 GC / báo cáo'],
+['GIANG_DAY_KHAC','HD_KHOA_LUAN_DO_AN_TOT_NGHIEP','Hướng dẫn khóa luận / đồ án tốt nghiệp đại học','Khóa luận / Đồ án',18,false,'18 GC / khóa luận hoặc đồ án'],
+['GIANG_DAY_KHAC','CHAM_THU_II_BCTT_KHONG_HD','Chấm thứ II báo cáo thực tập tốt nghiệp đại học không thành lập hội đồng','Báo cáo',2,false,'02 GC / báo cáo'],
+['GIANG_DAY_KHAC','DU_AN_THI_BO_GD_GIAI_123','Hướng dẫn dự án thi cấp Bộ GD&ĐT đạt giải nhất, nhì, ba','Dự án',20,false,'20 GC / dự án'],
+['GIANG_DAY_KHAC','DU_AN_THI_BO_GD_KHUYEN_KHICH','Hướng dẫn dự án thi cấp Bộ GD&ĐT đạt giải khuyến khích','Dự án',15,false,'15 GC / dự án'],
+['GIANG_DAY_KHAC','DU_AN_THI_CAP_KHAC','Hướng dẫn dự án thi cấp Trường hoặc ngoài Trường đạt giải','Dự án',10,false,'10 GC / dự án'],
+['GIANG_DAY_KHAC','THUC_HANH_MAY_TINH','Hướng dẫn thực hành, thí nghiệm trên máy tính','Sinh viên x tín chỉ',0.6,false,'0,6 GC / 01 SV / 01 tín chỉ'],
+['GIANG_DAY_KHAC','THUC_HANH_MON_KHAC','Hướng dẫn thực hành, thí nghiệm môn học khác','Sinh viên x tín chỉ',1,false,'01 GC / 01 SV / 01 tín chỉ'],
+['GIANG_DAY_KHAC','THUC_HANH_GD_THE_CHAT','Hướng dẫn thực hành lớp học phần Giáo dục thể chất','Sinh viên x tín chỉ',1,false,'01 GC / 01 SV / 01 tín chỉ'],
+['GIANG_DAY_KHAC','HO_TRO_VAN_PHONG_KHOA','Hỗ trợ công tác Văn phòng Khoa','Năm',50,false,'50 GC / năm'],
+['GIANG_DAY_KHAC','CVHT_DUOI_40','Cố vấn học tập lớp có dưới hoặc bằng 40 sinh viên','Lớp / năm',45,false,'45 GC / lớp / năm'],
+['GIANG_DAY_KHAC','CVHT_41_50','Cố vấn học tập lớp có 41-50 sinh viên','Lớp / năm',50,false,'50 GC / lớp / năm'],
+['GIANG_DAY_KHAC','CVHT_51_60','Cố vấn học tập lớp có 51-60 sinh viên','Lớp / năm',55,false,'55 GC / lớp / năm'],
+['GIANG_DAY_KHAC','CVHT_61_70','Cố vấn học tập lớp có 61-70 sinh viên','Lớp / năm',60,false,'60 GC / lớp / năm'],
+['GIANG_DAY_KHAC','CVHT_71_80','Cố vấn học tập lớp có 71-80 sinh viên','Lớp / năm',65,false,'65 GC / lớp / năm'],
+['GIANG_DAY_KHAC','CVHT_TREN_81','Cố vấn học tập lớp có trên 81 sinh viên','Lớp / năm',70,false,'70 GC / lớp / năm'],
+['GIANG_DAY_KHAC','NGAN_HANG_DE_TU_LUAN','Xây dựng ngân hàng đề thi tự luận','Tín chỉ',15,false,'15 GC / 01 tín chỉ'],
+['GIANG_DAY_KHAC','NGAN_HANG_DE_VAN_DAP','Xây dựng ngân hàng đề thi vấn đáp','Tín chỉ',15,false,'15 GC / 01 tín chỉ'],
+['GIANG_DAY_KHAC','NGAN_HANG_DE_TRAC_NGHIEM','Xây dựng ngân hàng đề thi trắc nghiệm hoặc kết hợp tự luận','Tín chỉ',20,false,'20 GC / 01 tín chỉ'],
+['GIANG_DAY_KHAC','DANH_GIA_HP_DAI_HOC','Công tác đánh giá học phần trình độ đại học','Sinh viên',0.2,false,'0,2 GC / 01 sinh viên'],
+['GIANG_DAY_KHAC','DANH_GIA_HP_SAU_DAI_HOC','Công tác đánh giá học phần trình độ sau đại học','Sinh viên',0.3,false,'0,3 GC / 01 sinh viên'],
+['GIANG_DAY_KHAC','CONG_THEM_LOP_DUOI_20','Cộng thêm cho lớp học phần có số lượng sinh viên nhỏ hơn hoặc bằng 20','Lớp học phần',2,false,'Cộng thêm 02 GC / lớp'],
+['GIANG_DAY_KHAC','COI_THI','Coi thi / giám sát thi','Ca thi',1,false,'01 GC / ca thi'],
+['GIANG_DAY_KHAC','PHU_TRACH_PHONG_THI_NGHIEM','Giảng viên kiêm nhiệm phụ trách phòng thí nghiệm','Năm',40,false,'40 GC / năm'],
+['HOI_DONG','HD_THAM_DINH_BAI_GIANG_CHU_TICH','Hội đồng thẩm định bài giảng - Chủ tịch','Hội đồng',4,false,'04 GC'],
+['HOI_DONG','HD_THAM_DINH_BAI_GIANG_PHAN_BIEN','Hội đồng thẩm định bài giảng - Phản biện','Hội đồng',5,false,'05 GC'],
+['HOI_DONG','HD_THAM_DINH_BAI_GIANG_THU_KY','Hội đồng thẩm định bài giảng - Ủy viên kiêm thư ký','Hội đồng',4,false,'04 GC'],
+['HOI_DONG','HD_NGHIEM_THU_CHU_TICH','Hội đồng nghiệm thu đề tài, dự án, giáo trình, chương trình đào tạo - Chủ tịch','Hội đồng',7,false,'07 GC'],
+['HOI_DONG','HD_NGHIEM_THU_PHAN_BIEN','Hội đồng nghiệm thu đề tài, dự án, giáo trình, chương trình đào tạo - Phản biện','Hội đồng',8,false,'08 GC'],
+['HOI_DONG','HD_NGHIEM_THU_UY_VIEN','Hội đồng nghiệm thu đề tài, dự án, giáo trình, chương trình đào tạo - Ủy viên','Hội đồng',5,false,'05 GC'],
+['HOI_DONG','HD_NGHIEM_THU_THU_KY','Hội đồng nghiệm thu đề tài, dự án, giáo trình, chương trình đào tạo - Thư ký','Hội đồng',6,false,'06 GC'],
+['HOI_DONG','HD_DO_AN_KLTN_DUOI_50_CHU_TICH','Hội đồng thẩm định đồ án / khóa luận dưới 50 - Chủ tịch','Hội đồng',5,false,'05 GC'],
+['HOI_DONG','HD_DO_AN_KLTN_DUOI_50_UY_VIEN','Hội đồng thẩm định đồ án / khóa luận dưới 50 - Phó Chủ tịch / Ủy viên','Hội đồng',3,false,'03 GC'],
+['HOI_DONG','HD_DO_AN_KLTN_DUOI_50_THU_KY','Hội đồng thẩm định đồ án / khóa luận dưới 50 - Thư ký','Hội đồng',4,false,'04 GC'],
+['HOI_DONG','HD_DO_AN_KLTN_TU_50_CHU_TICH','Hội đồng thẩm định đồ án / khóa luận từ 50 trở lên - Chủ tịch','Hội đồng',7,false,'07 GC'],
+['HOI_DONG','HD_DO_AN_KLTN_TU_50_UY_VIEN','Hội đồng thẩm định đồ án / khóa luận từ 50 trở lên - Phó Chủ tịch / Ủy viên','Hội đồng',5,false,'05 GC'],
+['HOI_DONG','HD_DO_AN_KLTN_TU_50_THU_KY','Hội đồng thẩm định đồ án / khóa luận từ 50 trở lên - Thư ký','Hội đồng',6,false,'06 GC'],
+['HOI_DONG','BAN_DANH_GIA_DO_AN_KLTN_TRUONG_BAN','Ban đánh giá đồ án / khóa luận tốt nghiệp - Trưởng ban','Ban',4,false,'04 GC'],
+['HOI_DONG','BAN_DANH_GIA_DO_AN_KLTN_PHAN_BIEN','Ban đánh giá đồ án / khóa luận tốt nghiệp - Phản biện','Ban',4,false,'04 GC'],
+['HOI_DONG','BAN_DANH_GIA_DO_AN_KLTN_THU_KY','Ban đánh giá đồ án / khóa luận tốt nghiệp - Thư ký','Ban',3,false,'03 GC'],
+['HOI_DONG','HD_NGHIEM_THU_NCKH_SV_CHU_TICH','Hội đồng nghiệm thu đề tài NCKH sinh viên - Chủ tịch','Hội đồng',4,false,'04 GC'],
+['HOI_DONG','HD_NGHIEM_THU_NCKH_SV_PHAN_BIEN','Hội đồng nghiệm thu đề tài NCKH sinh viên - Phản biện','Hội đồng',4,false,'04 GC'],
+['HOI_DONG','HD_NGHIEM_THU_NCKH_SV_THU_KY','Hội đồng nghiệm thu đề tài NCKH sinh viên - Thư ký','Hội đồng',3,false,'03 GC'],
+['NCKH','KHCN_CAP_NHA_NUOC','Nhiệm vụ KHCN cấp Nhà nước đã nghiệm thu','Nhiệm vụ',270,true,'270 GC / nhiệm vụ'],
+['NCKH','KHCN_CAP_BO_TINH_THANH','Nhiệm vụ KHCN cấp Bộ / Tỉnh / Thành phố đã nghiệm thu','Nhiệm vụ',250,true,'250 GC / nhiệm vụ'],
+['NCKH','DE_TAI_CO_SO_XUAT_SAC','Đề tài cấp cơ sở nghiệm thu xếp loại Xuất sắc','Đề tài',180,true,'180 GC / đề tài'],
+['NCKH','DE_TAI_CO_SO_TOT','Đề tài cấp cơ sở nghiệm thu xếp loại Tốt','Đề tài',170,true,'170 GC / đề tài'],
+['NCKH','DE_TAI_CO_SO_KHA','Đề tài cấp cơ sở nghiệm thu xếp loại Khá','Đề tài',160,true,'160 GC / đề tài'],
+['NCKH','DE_TAI_CO_SO_DAT','Đề tài cấp cơ sở nghiệm thu xếp loại Đạt','Đề tài',150,true,'150 GC / đề tài'],
+['NCKH','BIEN_SOAN_BAI_GIANG','Biên soạn bài giảng','Tín chỉ',20,true,'20 GC / tín chỉ'],
+['NCKH','BIEN_SOAN_GIAO_TRINH_NOI_BO','Biên soạn giáo trình lưu hành nội bộ','Tín chỉ',60,true,'60 GC / tín chỉ'],
+['NCKH','GIAO_TRINH_TAI_BAN_TREN_50','Biên soạn giáo trình tái bản, sửa chữa bổ sung trên 50%','Tín chỉ',40,true,'40 GC / tín chỉ'],
+['NCKH','GIAO_TRINH_TAI_BAN_30_50','Biên soạn giáo trình tái bản, sửa chữa bổ sung từ 30% đến 50%','Tín chỉ',30,true,'30 GC / tín chỉ'],
+['NCKH','GIAO_TRINH_TAI_BAN_DUOI_30','Biên soạn giáo trình tái bản, sửa chữa bổ sung dưới 30%','Tín chỉ',20,true,'20 GC / tín chỉ'],
+['NCKH','XUAT_BAN_GIAO_TRINH_ISBN','Xuất bản giáo trình đã được nghiệm thu có ISBN','Tín chỉ',40,true,'40 GC / tín chỉ'],
+['NCKH','SACH_CHUYEN_KHAO_NXB_UY_TIN','Sách chuyên khảo xuất bản bởi nhà xuất bản uy tín thế giới','Chương',100,true,'100 GC / chương'],
+['NCKH','SACH_THAM_KHAO_NXB_UY_TIN','Sách tham khảo xuất bản bởi nhà xuất bản uy tín thế giới','Chương',70,true,'70 GC / chương'],
+['NCKH','SACH_CHUYEN_KHAO_XUAT_BAN','Sách chuyên khảo được xuất bản','Sách',120,true,'120 GC'],
+['NCKH','SACH_THAM_KHAO_XUAT_BAN','Sách tham khảo được xuất bản','Sách',80,true,'80 GC'],
+['NCKH','BAI_BAO_SCIMAGO_Q1','Bài báo Scimago Q1','Bài báo',1000,true,'1000 GC / bài'],
+['NCKH','BAI_BAO_SCIMAGO_Q2','Bài báo Scimago Q2','Bài báo',600,true,'600 GC / bài'],
+['NCKH','BAI_BAO_SCIMAGO_Q3','Bài báo Scimago Q3','Bài báo',300,true,'300 GC / bài'],
+['NCKH','BAI_BAO_SCIMAGO_Q4','Bài báo Scimago Q4','Bài báo',200,true,'200 GC / bài'],
+['NCKH','BAI_BAO_ISI_SCOPUS_ACI_CHUA_XEP_HANG','Bài báo thuộc ISI / Scopus / ACI / SCImago nhưng chưa xếp hạng','Bài báo',150,true,'150 GC / bài'],
+['NCKH','BAI_BAO_KHONG_SCIMAGO','Bài báo khoa học nước ngoài không thuộc danh mục Scimago','Bài báo',100,true,'100 GC / bài'],
+['NCKH','TAP_CHI_TRONG_NUOC_TREN_1_DIEM','Tạp chí trong nước HĐCDGSNN trên 1.0 điểm','Bài báo',150,true,'150 GC / bài'],
+['NCKH','TAP_CHI_TRONG_NUOC_1_DIEM','Tạp chí trong nước HĐCDGSNN tối đa 1.0 điểm hoặc Tạp chí KH&CN Cần Thơ','Bài báo',130,true,'130 GC / bài'],
+['NCKH','TAP_CHI_TRONG_NUOC_075_DIEM','Tạp chí trong nước HĐCDGSNN tối đa 0.75 điểm','Bài báo',110,true,'110 GC / bài'],
+['NCKH','TAP_CHI_TRONG_NUOC_05_DIEM','Tạp chí trong nước HĐCDGSNN tối đa 0.5 điểm','Bài báo',90,true,'90 GC / bài'],
+['NCKH','TAP_CHI_TRONG_NUOC_025_DIEM','Tạp chí trong nước HĐCDGSNN tối đa 0.25 điểm','Bài báo',70,true,'70 GC / bài'],
+['NCKH','TAP_CHI_ISSN_PHAN_BIEN','Tạp chí khoa học có ISSN, có phản biện','Bài báo',50,true,'50 GC / bài'],
+['NCKH','CONG_THEM_BAI_BAO_TIENG_ANH','Cộng thêm cho bài báo trong nước đăng bằng tiếng Anh','Bài báo',30,false,'Cộng thêm 30 GC / bài'],
+['NCKH','KY_YEU_QUOC_TE_NGOAI_NGU','Bài đăng kỷ yếu hội nghị quốc tế toàn văn bằng tiếng nước ngoài, có phản biện','Bài',40,true,'40 GC / bài'],
+['NCKH','KY_YEU_QUOC_GIA_TIENG_VIET','Bài đăng kỷ yếu hội nghị quốc gia toàn văn bằng tiếng Việt, có phản biện','Bài',30,true,'30 GC / bài'],
+['NCKH','KY_YEU_CAP_KHOA_TRUONG_TINH','Bài viết đăng kỷ yếu hội nghị, hội thảo cấp khoa, trường, tỉnh, thành phố, có phản biện','Bài',20,true,'20 GC / bài'],
+['NCKH','BAN_TIN_KHDT_TRUONG','Bài viết đăng trên Bản tin Khoa học - Đào tạo của Trường','Bài',30,true,'30 GC / bài'],
+['NCKH','SO_HUU_TRI_TUE','Sản phẩm NCKH được cấp quyền sở hữu trí tuệ','Sản phẩm',100,true,'100 GC / sản phẩm'],
+['NCKH','BAO_CAO_KHOA_HOC_KHA_TRO_LEN','Báo cáo khoa học được đánh giá loại Khá trở lên','Báo cáo',20,true,'20 GC / báo cáo'],
+['NHIEM_VU_KHAC','HD_THAM_DINH_BAO_CAO_KH_CHU_TOA','Hội đồng thẩm định báo cáo khoa học - Chủ tọa','Hội đồng',3,false,'03 GC'],
+['NHIEM_VU_KHAC','HD_THAM_DINH_BAO_CAO_KH_THU_KY','Hội đồng thẩm định báo cáo khoa học - Thư ký','Hội đồng',2,false,'02 GC'],
+['NHIEM_VU_KHAC','HD_KHDT_TRUONG_CHU_TICH','Hội đồng Khoa học và Đào tạo Trường - Chủ tịch','Năm',70,false,'70 GC'],
+['NHIEM_VU_KHAC','HD_KHDT_TRUONG_PHO_CHU_TICH_THU_KY','Hội đồng Khoa học và Đào tạo Trường - Phó Chủ tịch / Thư ký','Năm',60,false,'60 GC'],
+['NHIEM_VU_KHAC','HD_KHDT_TRUONG_UY_VIEN','Hội đồng Khoa học và Đào tạo Trường - Ủy viên','Năm',50,false,'50 GC'],
+['NHIEM_VU_KHAC','HD_KHDT_KHOA_CHU_TICH','Hội đồng Khoa học và Đào tạo Khoa - Chủ tịch','Năm',30,false,'30 GC'],
+['NHIEM_VU_KHAC','HD_KHDT_KHOA_THU_KY','Hội đồng Khoa học và Đào tạo Khoa - Thư ký','Năm',25,false,'25 GC'],
+['NHIEM_VU_KHAC','HD_KHDT_KHOA_UY_VIEN','Hội đồng Khoa học và Đào tạo Khoa - Ủy viên','Năm',20,false,'20 GC'],
+['NHIEM_VU_KHAC','DE_AN_MO_NGANH_THAC_SI_TIEN_SI','Xây dựng đề án mở ngành trình độ thạc sĩ, tiến sĩ được phê duyệt','Đề án',450,true,'450 GC / đề án'],
+['NHIEM_VU_KHAC','DE_AN_MO_NGANH_DAI_HOC','Xây dựng đề án mở ngành trình độ đại học được phê duyệt','Đề án',300,true,'300 GC / đề án'],
+['NHIEM_VU_KHAC','CHUONG_TRINH_LIEN_THONG_VB2','Xây dựng chương trình đào tạo đại học liên thông và văn bằng 2 được phê duyệt','Chương trình',150,true,'150 GC / chương trình'],
+['NHIEM_VU_KHAC','DGCL_CSGD_TU_DANH_GIA_LAN_1','Đề án đánh giá chất lượng cơ sở giáo dục tự chuẩn lần thứ nhất','Đề án',1000,true,'1000 GC / đề án'],
+['NHIEM_VU_KHAC','DGCL_CSGD_CAC_LAN_TIEP_THEO','Đề án đánh giá chất lượng cơ sở giáo dục đạt chuẩn các lần tiếp theo','Đề án',500,true,'500 GC / đề án'],
+['NHIEM_VU_KHAC','DGCL_CSGD_GIUA_KY','Đề án đánh giá giữa kỳ cơ sở giáo dục đạt yêu cầu','Đề án',250,true,'250 GC / đề án'],
+['NHIEM_VU_KHAC','DGCL_CTDT_LAN_1','Đề án đánh giá chất lượng chương trình đào tạo tự chuẩn lần thứ nhất','Chương trình đào tạo',440,true,'440 GC / CTĐT'],
+['NHIEM_VU_KHAC','DGCL_CTDT_CAC_LAN_TIEP_THEO','Đề án đánh giá chất lượng chương trình đào tạo tự chuẩn các lần tiếp theo','Chương trình đào tạo',220,true,'220 GC / CTĐT'],
+['NHIEM_VU_KHAC','DGCL_CTDT_GIUA_KY','Đề án đánh giá giữa kỳ chương trình đào tạo đạt yêu cầu','Chương trình đào tạo',110,true,'110 GC / CTĐT']
+].map((r,i)=>({id:i+1, nhom:r[0], ma:r[1], ten:r[2], donVi:r[3], gio:r[4], heSoMacDinh:1, canTyLe:r[5], ghiChu:r[6]}));
+
+/* ====================== TRẠNG THÁI ====================== */
+const KEY = 'gcgd_v1';
+let S = load();
+
+function defaultState(){
+  return {
+    gv: [], gd: [], hd: [],
+    dmGioChuan: JSON.parse(JSON.stringify(SEED_DINH_MUC)),
+    dmHeSo: JSON.parse(JSON.stringify(SEED_HE_SO)),
+    dmHD: JSON.parse(JSON.stringify(SEED_HOAT_DONG)),
+    namHoc: '2025-2026',
+    nextId: 1000
+  };
+}
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return defaultState();
+    const s = JSON.parse(raw);
+    const d = defaultState();
+    for(const k of Object.keys(d)) if(s[k]===undefined) s[k]=d[k];
+    return s;
+  }catch(e){ return defaultState(); }
+}
+function save(){ localStorage.setItem(KEY, JSON.stringify(S)); }
+function uid(){ return ++S.nextId; }
+
+/* ====================== LOGIC TÍNH TOÁN (giữ nguyên từ bản C#) ====================== */
+function layHeSoSiSo(siSo){
+  const m = S.dmHeSo
+    .filter(x => siSo >= x.tu && (x.den === null || x.den === '' || siSo <= x.den))
+    .sort((a,b) => a.tu - b.tu)[0];
+  return m ? Number(m.heSo) : 1.0;
+}
+function tinhGiangDay(r){
+  r.heSoSiSo = layHeSoSiSo(Number(r.siSo)||0);
+  r.gioLT = round2((Number(r.tietLT)||0) * r.heSoSiSo);
+  r.gioTH = round2(Number(r.tietTH)||0);
+  r.tongGio = round2(r.gioLT + r.gioTH);
+  return r;
+}
+function tinhHoatDong(r){
+  const dm = S.dmHD.find(x => x.id === Number(r.dmId));
+  if(!dm) return null;
+  r.gioMacDinh = Number(dm.gio);
+  r.heSo = (Number(r.heSo) || 0) <= 0 ? Number(dm.heSoMacDinh) : Number(r.heSo);
+  if(!dm.canTyLe) r.tyLe = 100;
+  r.gioDuocTinh = round2((Number(r.soLuong)||0) * r.gioMacDinh * r.heSo * (Number(r.tyLe)||0) / 100);
+  return r;
+}
+function tongHop(gvId, nam){
+  const gv = S.gv.find(x => x.id === gvId);
+  if(!gv) return null;
+  const dinhMuc = S.dmGioChuan.find(x =>
+    x.chucDanh === gv.chucDanh && x.trinhDo === gv.trinhDo && x.nam === nam);
+
+  const sumHD = nhom => round2(S.hd
+    .filter(x => x.gvId === gvId && x.namHoc === nam &&
+      (S.dmHD.find(d => d.id === x.dmId) || {}).nhom === nhom)
+    .reduce((a,x) => a + Number(x.gioDuocTinh), 0));
+
+  const gioTrucTiep = round2(S.gd
+    .filter(x => x.gvId === gvId && x.namHoc === nam)
+    .reduce((a,x) => a + Number(x.tongGio), 0));
+
+  let gioChuanGD = dinhMuc ? Number(dinhMuc.gioGD) : 0;
+  let gioChuanNCKH = dinhMuc ? Number(dinhMuc.gioNCKH) : 0;
+  let ghiChu = '';
+  if(gv.tapSu || gv.ncs){
+    gioChuanGD = round2(gioChuanGD * 0.5);
+    gioChuanNCKH = 0;
+    if(gv.tapSu && gv.ncs) ghiChu = 'Giảng viên tập sự và đang học nghiên cứu sinh: giảm 50% giờ chuẩn giảng dạy, miễn giờ NCKH.';
+    else if(gv.tapSu) ghiChu = 'Giảng viên tập sự: giảm 50% giờ chuẩn giảng dạy, miễn giờ NCKH.';
+    else ghiChu = 'Giảng viên đang học nghiên cứu sinh: giảm 50% giờ chuẩn giảng dạy, miễn giờ NCKH.';
+  }
+  if(!dinhMuc) ghiChu = 'Chưa cấu hình định mức giờ chuẩn cho chức danh/trình độ của giảng viên trong năm học này.';
+
+  const t = {
+    gv, nam, daCauHinh: !!dinhMuc, ghiChu,
+    gioChuanGD, gioChuanNCKH,
+    gioTrucTiep,
+    gioGiangDayKhac: sumHD('GIANG_DAY_KHAC'),
+    gioHoiDong: sumHD('HOI_DONG'),
+    gioNCKH: sumHD('NCKH'),
+    gioNhiemVuKhac: sumHD('NHIEM_VU_KHAC')
+  };
+  t.tongGioGiangDay = round2(t.gioTrucTiep + t.gioGiangDayKhac + t.gioHoiDong);
+  t.chenhLechGD = round2(t.tongGioGiangDay - t.gioChuanGD);
+  t.chenhLechNCKH = round2(t.gioNCKH - t.gioChuanNCKH);
+  t.tongTatCa = round2(t.tongGioGiangDay + t.gioNCKH + t.gioNhiemVuKhac);
+  return t;
+}
+function round2(n){ return Math.round((Number(n)||0) * 100) / 100; }
+function fmt(n){ return Number(n).toLocaleString('vi-VN', {maximumFractionDigits:2}); }
+
+/* ====================== TIỆN ÍCH GIAO DIỆN ====================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let tab = 'tonghop';
+let tongHopGvId = null;
+
+function namHocList(){
+  const set = new Set(['2024-2025','2025-2026','2026-2027','2027-2028']);
+  S.gd.forEach(x => set.add(x.namHoc));
+  S.hd.forEach(x => set.add(x.namHoc));
+  S.dmGioChuan.forEach(x => set.add(x.nam));
+  return [...set].sort();
+}
+function renderNamHoc(){
+  $('#selNamHoc').innerHTML = namHocList()
+    .map(n => `<option ${n===S.namHoc?'selected':''}>${n}</option>`).join('');
+}
+$('#selNamHoc').onchange = e => { S.namHoc = e.target.value; save(); render(); };
+
+const ICONS = {
+  tonghop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>',
+  giangday:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+  hoatdong:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/><path d="M21 12v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h11"/></svg>',
+  giangvien:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/></svg>',
+  caidat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'
+};
+const TABS = [
+  ['tonghop','Tổng hợp'], ['giangday','Giảng dạy'], ['hoatdong','Hoạt động'],
+  ['giangvien','Giảng viên'], ['caidat','Cài đặt']
+];
+function renderNav(){
+  $('#nav').innerHTML = TABS.map(([id,label]) =>
+    `<button class="${tab===id?'active':''}" onclick="goTab('${id}')">${ICONS[id]}${label}</button>`).join('');
+}
+function goTab(t){ tab = t; render(); window.scrollTo(0,0); }
+
+function gvName(id){ const g = S.gv.find(x=>x.id===id); return g ? g.hoTen : '—'; }
+function gvOptions(sel){
+  return S.gv.slice().sort((a,b)=>a.hoTen.localeCompare(b.hoTen,'vi'))
+    .map(g=>`<option value="${g.id}" ${g.id===sel?'selected':''}>${esc(g.hoTen)} (${esc(g.ma)})</option>`).join('');
+}
+function openDlg(html){ $('#dlg').innerHTML = html; $('#dlg').showModal(); }
+function closeDlg(){ $('#dlg').close(); }
+
+/* ====================== TRANG: TỔNG HỢP ====================== */
+function viewTongHop(){
+  if(!S.gv.length){
+    return `<div class="card empty">Chưa có giảng viên nào.<br><br>
+      <button class="btn" onclick="goTab('giangvien')">+ Thêm giảng viên đầu tiên</button></div>`;
+  }
+  if(tongHopGvId === null || !S.gv.find(x=>x.id===tongHopGvId)) tongHopGvId = S.gv[0].id;
+  const t = tongHop(tongHopGvId, S.namHoc);
+  let html = `<div class="card no-print">
+    <h2>Bảng tổng hợp giờ chuẩn — ${esc(S.namHoc)}</h2>
+    <label>Giảng viên</label>
+    <select onchange="tongHopGvId=Number(this.value);render()">${gvOptions(tongHopGvId)}</select>
+  </div>`;
+  if(!t) return html;
+  const gv = t.gv;
+  const okGD = t.chenhLechGD >= 0, okNC = t.chenhLechNCKH >= 0;
+  html += `<div class="card" id="printArea">
+    <h2>${esc(gv.hoTen)} <span class="muted">(${esc(gv.ma)})</span></h2>
+    <div class="muted">${esc(CHUC_DANH[gv.chucDanh]||gv.chucDanh)} · ${esc(TRINH_DO[gv.trinhDo]||gv.trinhDo)}
+      ${gv.khoa?(' · '+esc(gv.khoa)):''} — Năm học ${esc(t.nam)}</div>
+    ${t.ghiChu?`<div class="note">${esc(t.ghiChu)}</div>`:''}
+    <div class="kpis">
+      <div class="kpi blue"><div class="v">${fmt(t.tongGioGiangDay)}</div><div class="l">Tổng giờ giảng dạy<br>(định mức ${fmt(t.gioChuanGD)})</div></div>
+      <div class="kpi ${okGD?'green':'red'}"><div class="v">${t.chenhLechGD>=0?'+':''}${fmt(t.chenhLechGD)}</div><div class="l">Chênh lệch giảng dạy</div></div>
+      <div class="kpi blue"><div class="v">${fmt(t.gioNCKH)}</div><div class="l">Giờ NCKH<br>(định mức ${fmt(t.gioChuanNCKH)})</div></div>
+      <div class="kpi ${okNC?'green':'red'}"><div class="v">${t.chenhLechNCKH>=0?'+':''}${fmt(t.chenhLechNCKH)}</div><div class="l">Chênh lệch NCKH</div></div>
+    </div>
+    <h3>Chi tiết</h3>
+    <div class="stat"><span>1. Giảng dạy trực tiếp (lớp học phần)</span><b>${fmt(t.gioTrucTiep)}</b></div>
+    <div class="stat"><span>2. Giảng dạy khác / hướng dẫn</span><b>${fmt(t.gioGiangDayKhac)}</b></div>
+    <div class="stat"><span>3. Hội đồng</span><b>${fmt(t.gioHoiDong)}</b></div>
+    <div class="stat"><span>Tổng giờ giảng dạy (1+2+3)</span><b class="${okGD?'ok':'bad'}">${fmt(t.tongGioGiangDay)} / ${fmt(t.gioChuanGD)}</b></div>
+    <div class="stat"><span>4. Nghiên cứu khoa học</span><b class="${okNC?'ok':'bad'}">${fmt(t.gioNCKH)} / ${fmt(t.gioChuanNCKH)}</b></div>
+    <div class="stat"><span>5. Nhiệm vụ khác</span><b>${fmt(t.gioNhiemVuKhac)}</b></div>
+    <div class="stat"><span><b>Tổng tất cả giờ quy đổi</b></span><b>${fmt(t.tongTatCa)}</b></div>
+  </div>
+  <div class="card no-print">
+    <div class="row">
+      <button class="btn secondary" onclick="window.print()">🖨️ In / Lưu PDF</button>
+      <button class="btn secondary" onclick="exportCsvTongHop()">⬇️ Xuất CSV chi tiết</button>
+    </div>
+  </div>`;
+  return html;
+}
+
+/* ====================== TRANG: GIẢNG DẠY ====================== */
+function viewGiangDay(){
+  const list = S.gd.filter(x => x.namHoc === S.namHoc).sort((a,b)=>b.id-a.id);
+  let rows = list.map(r => `<tr>
+    <td>${esc(gvName(r.gvId))}<div class="muted">${esc(r.hocKy)}</div></td>
+    <td>${esc(r.tenHP)}<div class="muted">${esc(r.maHP)}${r.lopHP?' · '+esc(r.lopHP):''}</div></td>
+    <td class="num">${fmt(r.tietLT)} / ${fmt(r.tietTH)}</td>
+    <td class="num">${r.siSo} <span class="badge blue">×${fmt(r.heSoSiSo)}</span></td>
+    <td class="num"><b>${fmt(r.tongGio)}</b></td>
+    <td class="actions"><button onclick="formGiangDay(${r.id})" title="Sửa">✏️</button><button onclick="delGiangDay(${r.id})" title="Xóa">🗑️</button></td>
+  </tr>`).join('');
+  return `<div class="card">
+    <div class="row"><h2>Giảng dạy trực tiếp — ${esc(S.namHoc)}</h2>
+      <button class="btn small right" onclick="formGiangDay()">+ Thêm</button></div>
+    ${list.length ? `<div class="tablewrap"><table>
+      <tr><th>Giảng viên</th><th>Học phần</th><th class="num">Tiết LT/TH</th><th class="num">Sĩ số</th><th class="num">Giờ QĐ</th><th></th></tr>
+      ${rows}</table></div>
+      <div class="muted" style="margin-top:8px">Tổng: <b>${fmt(list.reduce((a,x)=>a+x.tongGio,0))}</b> giờ chuẩn · Công thức: Giờ = Tiết LT × hệ số sĩ số + Tiết TH</div>`
+    : `<div class="empty">Chưa có dữ liệu trong năm học này.</div>`}
+  </div>`;
+}
+function formGiangDay(id){
+  if(!S.gv.length){ alert('Hãy thêm giảng viên trước.'); goTab('giangvien'); return; }
+  const r = id ? S.gd.find(x=>x.id===id) : {gvId:S.gv[0].id, namHoc:S.namHoc, hocKy:'HK1', maHP:'', tenHP:'', lopHP:'', soTC:3, tietLT:0, tietTH:0, siSo:0};
+  openDlg(`<form method="dialog" onsubmit="saveGiangDay(${id||0});return false">
+  <div class="dlg-head"><b>${id?'Sửa':'Thêm'} lớp giảng dạy</b></div>
+  <div class="dlg-body">
+    <label>Giảng viên</label><select id="f_gv">${gvOptions(r.gvId)}</select>
+    <div class="grid2">
+      <div><label>Năm học</label><select id="f_nam">${namHocList().map(n=>`<option ${n===r.namHoc?'selected':''}>${n}</option>`).join('')}</select></div>
+      <div><label>Học kỳ</label><select id="f_hk">${['HK1','HK2','HK3'].map(h=>`<option ${h===r.hocKy?'selected':''}>${h}</option>`).join('')}</select></div>
+    </div>
+    <div class="grid2">
+      <div><label>Mã học phần</label><input id="f_mahp" required value="${esc(r.maHP)}"></div>
+      <div><label>Lớp học phần</label><input id="f_lop" value="${esc(r.lopHP)}"></div>
+    </div>
+    <label>Tên học phần</label><input id="f_tenhp" required value="${esc(r.tenHP)}">
+    <div class="grid3">
+      <div><label>Số tín chỉ</label><input id="f_tc" type="number" step="0.5" min="0" value="${r.soTC}"></div>
+      <div><label>Tiết lý thuyết</label><input id="f_lt" type="number" step="0.5" min="0" value="${r.tietLT}" oninput="previewGD()"></div>
+      <div><label>Tiết thực hành</label><input id="f_th" type="number" step="0.5" min="0" value="${r.tietTH}" oninput="previewGD()"></div>
+    </div>
+    <label>Sĩ số lớp</label><input id="f_siso" type="number" min="0" value="${r.siSo}" oninput="previewGD()">
+    <div class="preview" id="gdPreview"></div>
+  </div>
+  <div class="dlg-foot">
+    <button type="button" class="btn secondary" onclick="closeDlg()">Hủy</button>
+    <button class="btn">Lưu</button>
+  </div></form>`);
+  previewGD();
+}
+function previewGD(){
+  const lt = Number($('#f_lt').value)||0, th = Number($('#f_th').value)||0, ss = Number($('#f_siso').value)||0;
+  const hs = layHeSoSiSo(ss);
+  $('#gdPreview').innerHTML = `Hệ số sĩ số: <b>×${fmt(hs)}</b> → Giờ LT: <b>${fmt(round2(lt*hs))}</b> + Giờ TH: <b>${fmt(th)}</b> = <b>${fmt(round2(lt*hs+th))} giờ chuẩn</b>`;
+}
+function saveGiangDay(id){
+  const r = {
+    id: id || uid(), gvId: Number($('#f_gv').value), namHoc: $('#f_nam').value, hocKy: $('#f_hk').value,
+    maHP: $('#f_mahp').value.trim(), tenHP: $('#f_tenhp').value.trim(), lopHP: $('#f_lop').value.trim(),
+    soTC: Number($('#f_tc').value)||0, tietLT: Number($('#f_lt').value)||0,
+    tietTH: Number($('#f_th').value)||0, siSo: Number($('#f_siso').value)||0,
+    ngayTao: id ? (S.gd.find(x=>x.id===id)||{}).ngayTao : new Date().toISOString()
+  };
+  if(!r.maHP || !r.tenHP){ alert('Vui lòng nhập mã và tên học phần.'); return; }
+  tinhGiangDay(r);
+  if(id) S.gd = S.gd.map(x => x.id===id ? r : x); else S.gd.push(r);
+  save(); closeDlg(); render();
+}
+function delGiangDay(id){ if(confirm('Xóa dòng này?')){ S.gd = S.gd.filter(x=>x.id!==id); save(); render(); } }
+
+/* ====================== TRANG: HOẠT ĐỘNG QUY ĐỔI ====================== */
+function viewHoatDong(){
+  const list = S.hd.filter(x => x.namHoc === S.namHoc).sort((a,b)=>b.id-a.id);
+  const rows = list.map(r => {
+    const dm = S.dmHD.find(d=>d.id===r.dmId) || {};
+    return `<tr>
+      <td>${esc(gvName(r.gvId))}<div class="muted"><span class="badge blue">${esc(NHOM[dm.nhom]||'')}</span></div></td>
+      <td>${esc(r.tenNoiDung || dm.ten || '')}<div class="muted">${esc(dm.ten||'')}</div></td>
+      <td class="num">${fmt(r.soLuong)}<div class="muted">×${fmt(r.gioMacDinh)} ×${fmt(r.heSo)} ×${fmt(r.tyLe)}%</div></td>
+      <td class="num"><b>${fmt(r.gioDuocTinh)}</b></td>
+      <td class="actions"><button onclick="formHoatDong(${r.id})" title="Sửa">✏️</button><button onclick="delHoatDong(${r.id})" title="Xóa">🗑️</button></td>
+    </tr>`;
+  }).join('');
+  return `<div class="card">
+    <div class="row"><h2>Hoạt động quy đổi — ${esc(S.namHoc)}</h2>
+      <button class="btn small right" onclick="formHoatDong()">+ Thêm</button></div>
+    ${list.length ? `<div class="tablewrap"><table>
+      <tr><th>Giảng viên</th><th>Nội dung</th><th class="num">SL × Giờ × HS × Tỷ lệ</th><th class="num">Giờ tính</th><th></th></tr>
+      ${rows}</table></div>
+      <div class="muted" style="margin-top:8px">Tổng: <b>${fmt(list.reduce((a,x)=>a+x.gioDuocTinh,0))}</b> giờ chuẩn</div>`
+    : `<div class="empty">Chưa có hoạt động nào trong năm học này.</div>`}
+  </div>`;
+}
+function dmHdOptions(nhom, sel){
+  return S.dmHD.filter(d => !nhom || d.nhom === nhom)
+    .map(d => `<option value="${d.id}" ${d.id===Number(sel)?'selected':''}>${esc(d.ten)} — ${esc(d.ghiChu)}</option>`).join('');
+}
+function formHoatDong(id){
+  if(!S.gv.length){ alert('Hãy thêm giảng viên trước.'); goTab('giangvien'); return; }
+  const r = id ? S.hd.find(x=>x.id===id)
+    : {gvId:S.gv[0].id, dmId:S.dmHD[0].id, namHoc:S.namHoc, tenNoiDung:'', soLuong:1, heSo:1, tyLe:100};
+  const dm = S.dmHD.find(d=>d.id===r.dmId) || S.dmHD[0];
+  openDlg(`<form method="dialog" onsubmit="saveHoatDong(${id||0});return false">
+  <div class="dlg-head"><b>${id?'Sửa':'Thêm'} hoạt động quy đổi</b></div>
+  <div class="dlg-body">
+    <label>Giảng viên</label><select id="h_gv">${gvOptions(r.gvId)}</select>
+    <div class="grid2">
+      <div><label>Năm học</label><select id="h_nam">${namHocList().map(n=>`<option ${n===r.namHoc?'selected':''}>${n}</option>`).join('')}</select></div>
+      <div><label>Nhóm</label><select id="h_nhom" onchange="$('#h_dm').innerHTML=dmHdOptions(this.value);previewHD()">
+        ${Object.entries(NHOM).map(([k,v])=>`<option value="${k}" ${k===dm.nhom?'selected':''}>${v}</option>`).join('')}</select></div>
+    </div>
+    <label>Hoạt động</label><select id="h_dm" onchange="previewHD()">${dmHdOptions(dm.nhom, r.dmId)}</select>
+    <label>Tên nội dung cụ thể (đề tài, bài báo, lớp...)</label>
+    <input id="h_ten" value="${esc(r.tenNoiDung)}" placeholder="VD: Bài báo ABC trên tạp chí XYZ">
+    <div class="grid3">
+      <div><label>Số lượng</label><input id="h_sl" type="number" step="0.1" min="0" value="${r.soLuong}" oninput="previewHD()"></div>
+      <div><label>Hệ số</label><input id="h_hs" type="number" step="0.1" min="0" value="${r.heSo}" oninput="previewHD()"></div>
+      <div><label>Tỷ lệ đóng góp %</label><input id="h_tl" type="number" step="1" min="0" max="100" value="${r.tyLe}" oninput="previewHD()"></div>
+    </div>
+    <div class="preview" id="hdPreview"></div>
+  </div>
+  <div class="dlg-foot">
+    <button type="button" class="btn secondary" onclick="closeDlg()">Hủy</button>
+    <button class="btn">Lưu</button>
+  </div></form>`);
+  previewHD();
+}
+function previewHD(){
+  const dm = S.dmHD.find(d => d.id === Number($('#h_dm').value));
+  if(!dm){ $('#hdPreview').textContent = ''; return; }
+  $('#h_tl').disabled = !dm.canTyLe;
+  if(!dm.canTyLe) $('#h_tl').value = 100;
+  const sl = Number($('#h_sl').value)||0;
+  let hs = Number($('#h_hs').value)||0; if(hs<=0) hs = dm.heSoMacDinh;
+  const tl = Number($('#h_tl').value)||0;
+  const gio = round2(sl * dm.gio * hs * tl / 100);
+  $('#hdPreview').innerHTML = `${esc(dm.ghiChu)} (đơn vị: ${esc(dm.donVi)})<br>
+    ${fmt(sl)} × ${fmt(dm.gio)} × ${fmt(hs)} × ${fmt(tl)}% = <b>${fmt(gio)} giờ chuẩn</b>
+    ${dm.canTyLe?'':'<br><span class="muted">Hoạt động này không chia tỷ lệ đóng góp (luôn 100%).</span>'}`;
+}
+function saveHoatDong(id){
+  const r = {
+    id: id || uid(), gvId: Number($('#h_gv').value), dmId: Number($('#h_dm').value),
+    namHoc: $('#h_nam').value, tenNoiDung: $('#h_ten').value.trim(),
+    soLuong: Number($('#h_sl').value)||0, heSo: Number($('#h_hs').value)||0,
+    tyLe: Number($('#h_tl').value)||0,
+    ngayTao: id ? (S.hd.find(x=>x.id===id)||{}).ngayTao : new Date().toISOString()
+  };
+  if(!tinhHoatDong(r)){ alert('Không tìm thấy danh mục hoạt động.'); return; }
+  if(id) S.hd = S.hd.map(x => x.id===id ? r : x); else S.hd.push(r);
+  save(); closeDlg(); render();
+}
+function delHoatDong(id){ if(confirm('Xóa hoạt động này?')){ S.hd = S.hd.filter(x=>x.id!==id); save(); render(); } }
+
+/* ====================== TRANG: GIẢNG VIÊN ====================== */
+function viewGiangVien(){
+  const rows = S.gv.slice().sort((a,b)=>a.hoTen.localeCompare(b.hoTen,'vi')).map(g => `<tr>
+    <td><b>${esc(g.hoTen)}</b><div class="muted">${esc(g.ma)}${g.khoa?' · '+esc(g.khoa):''}${g.boMon?' · '+esc(g.boMon):''}</div></td>
+    <td>${esc(CHUC_DANH[g.chucDanh]||g.chucDanh)}<div class="muted">${esc(TRINH_DO[g.trinhDo]||g.trinhDo)}</div>
+      ${g.tapSu?'<span class="badge amber">Tập sự</span> ':''}${g.ncs?'<span class="badge amber">NCS</span> ':''}
+      ${g.dangLamViec?'':'<span class="badge red">Nghỉ việc</span>'}</td>
+    <td class="actions"><button onclick="formGiangVien(${g.id})" title="Sửa">✏️</button><button onclick="delGiangVien(${g.id})" title="Xóa">🗑️</button></td>
+  </tr>`).join('');
+  return `<div class="card">
+    <div class="row"><h2>Giảng viên</h2><button class="btn small right" onclick="formGiangVien()">+ Thêm</button></div>
+    ${S.gv.length ? `<div class="tablewrap"><table><tr><th>Họ tên</th><th>Chức danh / Trình độ</th><th></th></tr>${rows}</table></div>`
+      : `<div class="empty">Chưa có giảng viên. Bấm <b>+ Thêm</b> để bắt đầu.<br><span class="muted">Nếu chỉ dùng cho cá nhân bạn, thêm chính mình là đủ.</span></div>`}
+  </div>`;
+}
+function formGiangVien(id){
+  const g = id ? S.gv.find(x=>x.id===id)
+    : {ma:'', hoTen:'', khoa:'', boMon:'', chucDanh:'GV_HANG_III', trinhDo:'THAC_SI', tapSu:false, ncs:false, dangLamViec:true};
+  openDlg(`<form method="dialog" onsubmit="saveGiangVien(${id||0});return false">
+  <div class="dlg-head"><b>${id?'Sửa':'Thêm'} giảng viên</b></div>
+  <div class="dlg-body">
+    <div class="grid2">
+      <div><label>Mã giảng viên</label><input id="g_ma" required value="${esc(g.ma)}"></div>
+      <div><label>Họ tên</label><input id="g_ten" required value="${esc(g.hoTen)}"></div>
+    </div>
+    <div class="grid2">
+      <div><label>Khoa</label><input id="g_khoa" value="${esc(g.khoa)}"></div>
+      <div><label>Bộ môn</label><input id="g_bm" value="${esc(g.boMon)}"></div>
+    </div>
+    <div class="grid2">
+      <div><label>Chức danh</label><select id="g_cd">${Object.entries(CHUC_DANH).map(([k,v])=>`<option value="${k}" ${k===g.chucDanh?'selected':''}>${v}</option>`).join('')}</select></div>
+      <div><label>Trình độ</label><select id="g_td">${Object.entries(TRINH_DO).map(([k,v])=>`<option value="${k}" ${k===g.trinhDo?'selected':''}>${v}</option>`).join('')}</select></div>
+    </div>
+    <label class="check"><input type="checkbox" id="g_tapsu" ${g.tapSu?'checked':''}> Giảng viên tập sự (giảm 50% giờ GD, miễn NCKH)</label>
+    <label class="check"><input type="checkbox" id="g_ncs" ${g.ncs?'checked':''}> Đang học nghiên cứu sinh (giảm 50% giờ GD, miễn NCKH)</label>
+    <label class="check"><input type="checkbox" id="g_lv" ${g.dangLamViec?'checked':''}> Đang làm việc</label>
+  </div>
+  <div class="dlg-foot">
+    <button type="button" class="btn secondary" onclick="closeDlg()">Hủy</button>
+    <button class="btn">Lưu</button>
+  </div></form>`);
+}
+function saveGiangVien(id){
+  const g = {
+    id: id || uid(), ma: $('#g_ma').value.trim(), hoTen: $('#g_ten').value.trim(),
+    khoa: $('#g_khoa').value.trim(), boMon: $('#g_bm').value.trim(),
+    chucDanh: $('#g_cd').value, trinhDo: $('#g_td').value,
+    tapSu: $('#g_tapsu').checked, ncs: $('#g_ncs').checked, dangLamViec: $('#g_lv').checked
+  };
+  if(!g.ma || !g.hoTen){ alert('Vui lòng nhập mã và họ tên.'); return; }
+  if(id) S.gv = S.gv.map(x => x.id===id ? g : x); else S.gv.push(g);
+  save(); closeDlg(); render();
+}
+function delGiangVien(id){
+  const cnt = S.gd.filter(x=>x.gvId===id).length + S.hd.filter(x=>x.gvId===id).length;
+  if(!confirm(cnt ? `Giảng viên này có ${cnt} bản ghi dữ liệu. Xóa giảng viên sẽ xóa toàn bộ dữ liệu kèm theo?` : 'Xóa giảng viên này?')) return;
+  S.gv = S.gv.filter(x=>x.id!==id);
+  S.gd = S.gd.filter(x=>x.gvId!==id);
+  S.hd = S.hd.filter(x=>x.gvId!==id);
+  save(); render();
+}
+
+/* ====================== TRANG: CÀI ĐẶT / DANH MỤC ====================== */
+function viewCaiDat(){
+  const dmRows = S.dmGioChuan.slice().sort((a,b)=>a.nam.localeCompare(b.nam)||a.chucDanh.localeCompare(b.chucDanh)).map(d=>`<tr>
+    <td>${esc(CHUC_DANH[d.chucDanh]||d.chucDanh)}<div class="muted">${esc(TRINH_DO[d.trinhDo]||d.trinhDo)} · ${esc(d.nam)}</div></td>
+    <td class="num">${fmt(d.gioGD)}</td><td class="num">${fmt(d.gioNCKH)}</td>
+    <td class="actions"><button onclick="formDinhMuc(${d.id})">✏️</button><button onclick="delDinhMuc(${d.id})">🗑️</button></td>
+  </tr>`).join('');
+  const hsRows = S.dmHeSo.slice().sort((a,b)=>a.tu-b.tu).map(h=>`<tr>
+    <td>${h.tu} – ${h.den===null||h.den===''?'trở lên':h.den} SV</td>
+    <td class="num">×${fmt(h.heSo)}</td>
+    <td class="actions"><button onclick="formHeSo(${h.id})">✏️</button></td>
+  </tr>`).join('');
+  return `
+  <div class="card">
+    <div class="row"><h2>Định mức giờ chuẩn</h2><button class="btn small right" onclick="formDinhMuc()">+ Thêm</button></div>
+    <div class="tablewrap"><table><tr><th>Chức danh / Trình độ / Năm</th><th class="num">GD</th><th class="num">NCKH</th><th></th></tr>${dmRows}</table></div>
+    <div class="muted" style="margin-top:6px">Sang năm học mới, bấm + Thêm để nhập định mức cho năm đó (hoặc sao chép số liệu cũ).</div>
+  </div>
+  <div class="card">
+    <h2>Hệ số sĩ số lớp</h2>
+    <div class="tablewrap"><table><tr><th>Khoảng sĩ số</th><th class="num">Hệ số</th><th></th></tr>${hsRows}</table></div>
+  </div>
+  <div class="card">
+    <h2>Danh mục hoạt động quy đổi</h2>
+    <div class="muted">${S.dmHD.length} hoạt động theo 4 nhóm. Có thể chỉnh số giờ quy đổi nếu quy chế trường bạn khác.</div>
+    <div style="margin-top:8px"><button class="btn secondary small" onclick="viewDmHD()">Xem & chỉnh sửa danh mục</button></div>
+  </div>
+  <div class="card">
+    <h2>Dữ liệu & sao lưu</h2>
+    <div class="muted">Dữ liệu được lưu trên thiết bị này (không gửi đi đâu). Hãy sao lưu định kỳ để không mất dữ liệu.</div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn" onclick="exportJSON()">⬇️ Sao lưu (JSON)</button>
+      <button class="btn secondary" onclick="$('#fileImport').click()">⬆️ Phục hồi từ file</button>
+      <button class="btn danger" onclick="resetAll()">Xóa toàn bộ dữ liệu</button>
+      <input type="file" id="fileImport" accept=".json" style="display:none" onchange="importJSON(this)">
+    </div>
+  </div>
+  <div class="card muted" style="font-size:12.5px">
+    Giờ Chuẩn Giảng Dạy — ứng dụng miễn phí, chạy hoàn toàn trên thiết bị của bạn.
+    Định mức & hệ số mặc định theo quy chế mẫu, có thể tùy chỉnh trong Cài đặt.
+  </div>`;
+}
+function formDinhMuc(id){
+  const d = id ? S.dmGioChuan.find(x=>x.id===id)
+    : {chucDanh:'GV_HANG_III', trinhDo:'THAC_SI', gioGD:300, gioNCKH:150, nam:S.namHoc};
+  openDlg(`<form method="dialog" onsubmit="saveDinhMuc(${id||0});return false">
+  <div class="dlg-head"><b>${id?'Sửa':'Thêm'} định mức giờ chuẩn</b></div>
+  <div class="dlg-body">
+    <div class="grid2">
+      <div><label>Chức danh</label><select id="d_cd">${Object.entries(CHUC_DANH).map(([k,v])=>`<option value="${k}" ${k===d.chucDanh?'selected':''}>${v}</option>`).join('')}</select></div>
+      <div><label>Trình độ</label><select id="d_td">${Object.entries(TRINH_DO).map(([k,v])=>`<option value="${k}" ${k===d.trinhDo?'selected':''}>${v}</option>`).join('')}</select></div>
+    </div>
+    <div class="grid3">
+      <div><label>Giờ chuẩn GD</label><input id="d_gd" type="number" step="1" min="0" value="${d.gioGD}"></div>
+      <div><label>Giờ chuẩn NCKH</label><input id="d_nc" type="number" step="1" min="0" value="${d.gioNCKH}"></div>
+      <div><label>Năm áp dụng</label><input id="d_nam" value="${esc(d.nam)}" placeholder="2025-2026"></div>
+    </div>
+  </div>
+  <div class="dlg-foot">
+    <button type="button" class="btn secondary" onclick="closeDlg()">Hủy</button>
+    <button class="btn">Lưu</button>
+  </div></form>`);
+}
+function saveDinhMuc(id){
+  const d = { id: id || uid(), chucDanh: $('#d_cd').value, trinhDo: $('#d_td').value,
+    gioGD: Number($('#d_gd').value)||0, gioNCKH: Number($('#d_nc').value)||0, nam: $('#d_nam').value.trim() };
+  if(!d.nam){ alert('Nhập năm áp dụng, ví dụ 2025-2026.'); return; }
+  if(id) S.dmGioChuan = S.dmGioChuan.map(x => x.id===id ? d : x); else S.dmGioChuan.push(d);
+  save(); closeDlg(); render();
+}
+function delDinhMuc(id){ if(confirm('Xóa định mức này?')){ S.dmGioChuan = S.dmGioChuan.filter(x=>x.id!==id); save(); render(); } }
+function formHeSo(id){
+  const h = S.dmHeSo.find(x=>x.id===id);
+  openDlg(`<form method="dialog" onsubmit="saveHeSo(${id});return false">
+  <div class="dlg-head"><b>Sửa hệ số sĩ số</b></div>
+  <div class="dlg-body">
+    <div class="grid3">
+      <div><label>Sĩ số từ</label><input id="s_tu" type="number" min="0" value="${h.tu}"></div>
+      <div><label>Đến (trống = không giới hạn)</label><input id="s_den" type="number" min="0" value="${h.den===null?'':h.den}"></div>
+      <div><label>Hệ số</label><input id="s_hs" type="number" step="0.05" min="0" value="${h.heSo}"></div>
+    </div>
+  </div>
+  <div class="dlg-foot">
+    <button type="button" class="btn secondary" onclick="closeDlg()">Hủy</button>
+    <button class="btn">Lưu</button>
+  </div></form>`);
+}
+function saveHeSo(id){
+  S.dmHeSo = S.dmHeSo.map(x => x.id===id ? {
+    id, tu: Number($('#s_tu').value)||0,
+    den: $('#s_den').value==='' ? null : Number($('#s_den').value),
+    heSo: Number($('#s_hs').value)||1
+  } : x);
+  S.gd.forEach(tinhGiangDay); // tính lại toàn bộ
+  save(); closeDlg(); render();
+}
+function viewDmHD(){
+  const rows = S.dmHD.map(d=>`<tr>
+    <td><span class="badge blue">${esc(NHOM[d.nhom])}</span><br>${esc(d.ten)}<div class="muted">${esc(d.ghiChu)} · ${esc(d.donVi)}</div></td>
+    <td class="num">${fmt(d.gio)}</td>
+    <td class="actions"><button onclick="formDmHD(${d.id})">✏️</button></td>
+  </tr>`).join('');
+  openDlg(`<div class="dlg-head"><b>Danh mục hoạt động quy đổi (${S.dmHD.length})</b>
+    <button class="btn small right" onclick="formDmHD()">+ Thêm</button></div>
+  <div class="dlg-body"><div class="tablewrap"><table><tr><th>Hoạt động</th><th class="num">Giờ QĐ</th><th></th></tr>${rows}</table></div></div>
+  <div class="dlg-foot"><button class="btn secondary" onclick="closeDlg()">Đóng</button></div>`);
+}
+function formDmHD(id){
+  const d = id ? S.dmHD.find(x=>x.id===id)
+    : {nhom:'GIANG_DAY_KHAC', ma:'TU_THEM_'+Date.now(), ten:'', donVi:'', gio:0, heSoMacDinh:1, canTyLe:false, ghiChu:''};
+  openDlg(`<form method="dialog" onsubmit="saveDmHD(${id||0});return false">
+  <div class="dlg-head"><b>${id?'Sửa':'Thêm'} hoạt động trong danh mục</b></div>
+  <div class="dlg-body">
+    <label>Nhóm</label><select id="m_nhom">${Object.entries(NHOM).map(([k,v])=>`<option value="${k}" ${k===d.nhom?'selected':''}>${v}</option>`).join('')}</select>
+    <label>Tên hoạt động</label><input id="m_ten" required value="${esc(d.ten)}">
+    <div class="grid3">
+      <div><label>Đơn vị tính</label><input id="m_dv" value="${esc(d.donVi)}"></div>
+      <div><label>Giờ quy đổi</label><input id="m_gio" type="number" step="0.1" min="0" value="${d.gio}"></div>
+      <div><label>Hệ số mặc định</label><input id="m_hs" type="number" step="0.1" min="0" value="${d.heSoMacDinh}"></div>
+    </div>
+    <label class="check"><input type="checkbox" id="m_tl" ${d.canTyLe?'checked':''}> Cần chia tỷ lệ đóng góp (đồng tác giả/đồng chủ trì)</label>
+    <label>Ghi chú</label><input id="m_gc" value="${esc(d.ghiChu)}">
+  </div>
+  <div class="dlg-foot">
+    <button type="button" class="btn secondary" onclick="closeDlg()">Hủy</button>
+    <button class="btn">Lưu</button>
+  </div></form>`);
+}
+function saveDmHD(id){
+  const d = {
+    id: id || uid(), nhom: $('#m_nhom').value,
+    ma: id ? S.dmHD.find(x=>x.id===id).ma : 'TU_THEM_'+Date.now(),
+    ten: $('#m_ten').value.trim(), donVi: $('#m_dv').value.trim(),
+    gio: Number($('#m_gio').value)||0, heSoMacDinh: Number($('#m_hs').value)||1,
+    canTyLe: $('#m_tl').checked, ghiChu: $('#m_gc').value.trim()
+  };
+  if(!d.ten){ alert('Nhập tên hoạt động.'); return; }
+  if(id) S.dmHD = S.dmHD.map(x => x.id===id ? d : x); else S.dmHD.push(d);
+  S.hd.forEach(tinhHoatDong); // tính lại
+  save(); closeDlg(); render();
+}
+
+/* ====================== XUẤT / NHẬP DỮ LIỆU ====================== */
+function download(name, content, type){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], {type}));
+  a.download = name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+}
+function exportJSON(){
+  download(`giochuan-saoluu-${new Date().toISOString().slice(0,10)}.json`,
+    JSON.stringify(S, null, 1), 'application/json');
+}
+function importJSON(input){
+  const f = input.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    try{
+      const s = JSON.parse(rd.result);
+      if(!s.dmHD || !Array.isArray(s.gv)) throw 0;
+      if(confirm('Phục hồi sẽ THAY THẾ toàn bộ dữ liệu hiện tại. Tiếp tục?')){
+        S = s; save(); renderNamHoc(); render(); alert('Đã phục hồi dữ liệu.');
+      }
+    }catch(e){ alert('File không hợp lệ.'); }
+    input.value = '';
+  };
+  rd.readAsText(f);
+}
+function resetAll(){
+  if(confirm('Xóa TOÀN BỘ dữ liệu và đưa về mặc định? (Nên sao lưu trước)') && confirm('Chắc chắn xóa?')){
+    S = defaultState(); save(); renderNamHoc(); render();
+  }
+}
+function csvCell(v){ v = String(v ?? ''); return /[",;\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; }
+function exportCsvTongHop(){
+  const t = tongHop(tongHopGvId, S.namHoc); if(!t) return;
+  const L = [];
+  L.push(['BẢNG TỔNG HỢP GIỜ CHUẨN', t.gv.hoTen, t.gv.ma, 'Năm học', t.nam].map(csvCell).join(','));
+  L.push('');
+  L.push('I. GIẢNG DẠY TRỰC TIẾP');
+  L.push(['Học kỳ','Mã HP','Tên học phần','Lớp','TC','Tiết LT','Tiết TH','Sĩ số','Hệ số','Giờ LT','Giờ TH','Tổng giờ'].join(','));
+  S.gd.filter(x=>x.gvId===t.gv.id && x.namHoc===t.nam).forEach(r =>
+    L.push([r.hocKy,r.maHP,r.tenHP,r.lopHP,r.soTC,r.tietLT,r.tietTH,r.siSo,r.heSoSiSo,r.gioLT,r.gioTH,r.tongGio].map(csvCell).join(',')));
+  L.push('');
+  L.push('II. HOẠT ĐỘNG QUY ĐỔI');
+  L.push(['Nhóm','Hoạt động','Nội dung','Số lượng','Giờ QĐ','Hệ số','Tỷ lệ %','Giờ được tính'].join(','));
+  S.hd.filter(x=>x.gvId===t.gv.id && x.namHoc===t.nam).forEach(r => {
+    const dm = S.dmHD.find(d=>d.id===r.dmId)||{};
+    L.push([NHOM[dm.nhom]||'',dm.ten||'',r.tenNoiDung,r.soLuong,r.gioMacDinh,r.heSo,r.tyLe,r.gioDuocTinh].map(csvCell).join(','));
+  });
+  L.push('');
+  L.push('III. TỔNG HỢP');
+  [['Giảng dạy trực tiếp',t.gioTrucTiep],['Giảng dạy khác/Hướng dẫn',t.gioGiangDayKhac],['Hội đồng',t.gioHoiDong],
+   ['Tổng giờ giảng dạy',t.tongGioGiangDay],['Định mức giảng dạy',t.gioChuanGD],['Chênh lệch giảng dạy',t.chenhLechGD],
+   ['Giờ NCKH',t.gioNCKH],['Định mức NCKH',t.gioChuanNCKH],['Chênh lệch NCKH',t.chenhLechNCKH],
+   ['Nhiệm vụ khác',t.gioNhiemVuKhac],['Tổng tất cả giờ quy đổi',t.tongTatCa]
+  ].forEach(r => L.push(r.map(csvCell).join(',')));
+  if(t.ghiChu){ L.push(''); L.push(csvCell('Ghi chú: '+t.ghiChu)); }
+  download(`tonghop-${t.gv.ma}-${t.nam}.csv`, '﻿'+L.join('\r\n'), 'text/csv;charset=utf-8');
+}
+
+/* ====================== RENDER CHÍNH ====================== */
+function render(){
+  renderNav();
+  const views = {tonghop:viewTongHop, giangday:viewGiangDay, hoatdong:viewHoatDong, giangvien:viewGiangVien, caidat:viewCaiDat};
+  $('#app').innerHTML = views[tab]();
+}
+renderNamHoc();
+render();
+
+/* ====================== SERVICE WORKER (cài đặt lên điện thoại + offline) ====================== */
+if('serviceWorker' in navigator && location.protocol === 'https:'){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+/* ====================== TỰ KIỂM TRA (mở trang với #test) ====================== */
+function runTests(){
+  const eq = (a,b,msg) => { if(Math.abs(a-b) > 1e-9) throw new Error(msg+`: ${a} ≠ ${b}`); };
+  const bk = JSON.stringify(S);
+  try{
+    S = defaultState();
+    eq(layHeSoSiSo(0),1.0,'hs 0'); eq(layHeSoSiSo(40),1.0,'hs 40');
+    eq(layHeSoSiSo(41),1.1,'hs 41'); eq(layHeSoSiSo(55),1.2,'hs 55');
+    eq(layHeSoSiSo(81),1.5,'hs 81'); eq(layHeSoSiSo(200),1.5,'hs 200');
+    const g = tinhGiangDay({tietLT:30, tietTH:15, siSo:55});
+    eq(g.gioLT,36,'gioLT'); eq(g.gioTH,15,'gioTH'); eq(g.tongGio,51,'tongGio');
+    const dmQ1 = S.dmHD.find(d=>d.ma==='BAI_BAO_SCIMAGO_Q1');
+    const h1 = tinhHoatDong({dmId:dmQ1.id, soLuong:1, heSo:0, tyLe:50});
+    eq(h1.gioDuocTinh,500,'Q1 50%'); eq(h1.heSo,1,'heSo mặc định');
+    const dmCoiThi = S.dmHD.find(d=>d.ma==='COI_THI');
+    const h2 = tinhHoatDong({dmId:dmCoiThi.id, soLuong:5, heSo:1, tyLe:30});
+    eq(h2.tyLe,100,'không chia tỷ lệ'); eq(h2.gioDuocTinh,5,'coi thi 5 ca');
+    S.gv = [{id:1, ma:'GV01', hoTen:'Test', chucDanh:'GV_HANG_III', trinhDo:'THAC_SI', tapSu:true, ncs:false, dangLamViec:true}];
+    S.gd = [Object.assign({id:2, gvId:1, namHoc:'2025-2026'}, g)];
+    S.hd = [];
+    const t = tongHop(1,'2025-2026');
+    eq(t.gioChuanGD,150,'định mức tập sự 300×0.5'); eq(t.gioChuanNCKH,0,'miễn NCKH');
+    eq(t.tongGioGiangDay,51,'tổng GD'); eq(t.chenhLechGD,-99,'chênh lệch');
+    alert('✅ Tất cả kiểm tra logic ĐẠT (12 phép thử).');
+  }catch(e){ alert('❌ Lỗi kiểm tra: '+e.message); }
+  finally{ S = JSON.parse(bk); render(); }
+}
+if(location.hash === '#test') setTimeout(runTests, 300);
+</script>
+</body>
+</html>
