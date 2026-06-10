@@ -16,7 +16,7 @@ Mở file `index.html` bằng Chrome hoặc Edge là dùng được ngay (chưa 
 2. Bấm **New repository**, đặt tên ví dụ `giochuan`, chọn **Public**, bấm Create.
 3. Trong trang repo, bấm **uploading an existing file**, kéo thả 5 file trong thư mục `webapp` này vào (`index.html`, `manifest.webmanifest`, `sw.js`, `icon.svg`, `icon-maskable.svg`), bấm **Commit changes**.
 4. Vào **Settings → Pages**, mục Source chọn **Deploy from a branch**, Branch chọn `main` / thư mục `/ (root)`, bấm Save.
-5. Sau 1–2 phút, app của bạn có địa chỉ công khai dạng: `https://tenban.github.io/giochuan/`
+5. Sau 1–2 phút, app của bạn có địa chỉ công khai dạng: `https://tommyduong248.github.io/giochuan/`
 
 Gửi đường link này cho bất kỳ ai — họ mở là dùng được, miễn phí, không cần đăng ký.
 
