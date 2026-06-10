@@ -1,5 +1,5 @@
 /* Service worker — cho phép app chạy offline và cài lên điện thoại */
-const CACHE = 'gcgd-v1';
+const CACHE = 'gcgd-v2';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-maskable.svg'];
 
 self.addEventListener('install', e => {

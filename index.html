@@ -11,32 +11,39 @@
 <meta name="apple-mobile-web-app-title" content="Giờ Chuẩn">
 <style>
 :root{
-  --primary:#0f6cbd; --primary-dark:#0a4f8f; --bg:#f4f6f9; --card:#ffffff;
-  --text:#1a2433; --muted:#64748b; --border:#e2e8f0; --green:#15803d;
-  --red:#b91c1c; --amber:#b45309; --radius:12px;
+  --primary:#0f6cbd; --primary-dark:#0a4f8f; --ink:#0a2f6b; --bg:#eef2f8; --card:#ffffff;
+  --text:#16243a; --muted:#5b6b82; --border:#e3e9f2; --green:#0e8a4d;
+  --red:#cf2e3f; --amber:#b45309; --radius:16px;
+  --shadow:0 1px 2px rgba(13,38,76,.06), 0 8px 24px -12px rgba(13,38,76,.18);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.45;padding-bottom:calc(64px + env(safe-area-inset-bottom))}
-header{background:var(--primary);color:#fff;padding:12px 16px;position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px}
-header h1{font-size:17px;font-weight:600;flex:1}
-header select{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:5px 8px;font-size:13px}
-header select option{color:#1a2433}
-main{max-width:860px;margin:0 auto;padding:14px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px}
-.card h2{font-size:15px;margin-bottom:10px;color:var(--primary-dark)}
-.card h3{font-size:14px;margin:10px 0 6px}
+body{font-family:"Segoe UI Variable Text","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#e6edf8 0%,var(--bg) 260px);color:var(--text);font-size:15px;line-height:1.5;min-height:100vh;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+header{background:linear-gradient(120deg,#082a5e 0%,#0f6cbd 68%,#1a8de4 100%);color:#fff;padding:12px 16px;position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;box-shadow:0 4px 18px -6px rgba(8,42,94,.45)}
+.logo-wrap{width:44px;height:44px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.logo-wrap img,.logo-wrap svg{width:38px;height:38px;object-fit:contain;display:block}
+.head-txt{flex:1;min-width:0}
+.head-txt h1{font-size:16px;font-weight:700;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.head-txt .sub{font-size:10.5px;opacity:.88;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header select{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:6px 9px;font-size:13px}
+header select option{color:#16243a}
+main{max-width:880px;margin:0 auto;padding:16px 14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card h2{font-size:15.5px;margin-bottom:10px;color:var(--ink)}
+.card h3{font-size:14px;margin:12px 0 6px;color:var(--ink)}
 .muted{color:var(--muted);font-size:13px}
-.btn{display:inline-flex;align-items:center;gap:6px;background:var(--primary);color:#fff;border:none;border-radius:8px;padding:9px 14px;font-size:14px;font-weight:500;cursor:pointer}
-.btn:active{background:var(--primary-dark)}
-.btn.secondary{background:#eef2f7;color:var(--text);border:1px solid var(--border)}
-.btn.danger{background:#fee2e2;color:var(--red);border:1px solid #fecaca}
-.btn.small{padding:5px 10px;font-size:13px}
+.btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#1487e0,#0a4f8f);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 3px 10px -3px rgba(15,108,189,.55);transition:transform .08s,box-shadow .15s}
+.btn:hover{box-shadow:0 6px 16px -4px rgba(15,108,189,.65)}
+.btn:active{transform:scale(.97)}
+.btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--border);box-shadow:none}
+.btn.danger{background:#fff;color:var(--red);border:1px solid #f3c2c8;box-shadow:none}
+.btn.small{padding:6px 12px;font-size:13px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .right{margin-left:auto}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
-th,td{padding:8px 6px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
-th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.02em}
+th,td{padding:9px 7px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+tr:hover td{background:#f7faff}
+th{color:var(--muted);font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;background:#f8fafd}
 td.num,th.num{text-align:right;white-space:nowrap}
 .tablewrap{overflow-x:auto}
 .empty{padding:24px;text-align:center;color:var(--muted)}
@@ -54,10 +61,10 @@ dialog::backdrop{background:rgba(15,23,42,.5)}
 .dlg-head b{font-size:16px}
 .dlg-body{padding:4px 16px 16px;overflow-y:auto}
 .dlg-foot{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--border);position:sticky;bottom:0;background:#fff}
-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);display:flex;z-index:30;padding-bottom:env(safe-area-inset-bottom)}
-nav button{flex:1;background:none;border:none;padding:8px 2px 6px;font-size:11px;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
-nav button.active{color:var(--primary);font-weight:600}
-nav button svg{width:22px;height:22px}
+nav{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);width:min(560px,calc(100% - 20px));background:rgba(255,255,255,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:22px;display:flex;z-index:30;box-shadow:0 12px 32px -10px rgba(13,38,76,.35);padding:5px;margin-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border:none;padding:8px 2px;font-size:10.5px;font-weight:600;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;border-radius:17px;transition:background .15s,color .15s}
+nav button.active{color:#fff;background:linear-gradient(135deg,#1487e0,#0a4f8f);box-shadow:0 4px 12px -3px rgba(15,108,189,.55)}
+nav button svg{width:21px;height:21px}
 .stat{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--border);font-size:14px}
 .stat:last-child{border-bottom:none}
 .stat b.ok{color:var(--green)} .stat b.bad{color:var(--red)}
@@ -67,10 +74,20 @@ nav button svg{width:22px;height:22px}
 .badge.blue{background:#dbeafe;color:var(--primary-dark)}
 .badge.amber{background:#fef3c7;color:var(--amber)}
 .note{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:8px;padding:9px 12px;font-size:13px;margin:8px 0}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0}
-.kpi{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:10px}
-.kpi .v{font-size:20px;font-weight:700} .kpi .l{font-size:12px;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+.kpi{position:relative;background:linear-gradient(160deg,#f8fbff,#eef4fc);border:1px solid var(--border);border-radius:14px;padding:12px;overflow:hidden}
+.kpi::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--primary)}
+.kpi .v{font-size:22px;font-weight:800;letter-spacing:-.01em} .kpi .l{font-size:12px;color:var(--muted);margin-top:2px}
+.kpi.green{background:linear-gradient(160deg,#f3fcf6,#e7f7ee)} .kpi.green::before{background:var(--green)}
+.kpi.red{background:linear-gradient(160deg,#fef5f6,#fdecee)} .kpi.red::before{background:var(--red)}
 .kpi.green .v{color:var(--green)} .kpi.red .v{color:var(--red)} .kpi.blue .v{color:var(--primary-dark)}
+.report-head{text-align:center;padding:4px 0 12px;border-bottom:2px solid var(--ink);margin-bottom:12px}
+.report-head img{width:64px;height:64px;object-fit:contain;margin-bottom:6px}
+.rh-truong{font-weight:800;color:var(--ink);text-transform:uppercase;font-size:14px;letter-spacing:.03em}
+.rh-donvi{font-size:12.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.rh-title{font-size:18px;font-weight:800;color:var(--ink);margin-top:10px;letter-spacing:.02em}
+.rh-sub{font-size:13px;color:var(--muted)}
+.print-only{display:none}
 .preview{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 12px;margin-top:12px;font-size:14px}
 .preview b{color:var(--primary-dark)}
 .actions{white-space:nowrap}
@@ -78,15 +95,19 @@ nav button svg{width:22px;height:22px}
 @media print{
   header,nav,.no-print{display:none!important}
   body{background:#fff;padding:0}
-  .card{border:none;page-break-inside:avoid}
+  .card{border:none;box-shadow:none;page-break-inside:avoid}
   main{max-width:100%}
+  .print-only{display:flex!important;justify-content:space-between;margin-top:28px;text-align:center;font-size:13px}
 }
 </style>
 </head>
 <body>
 <header>
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#fff" stroke-width="2"/><path d="M12 6v6l4 2" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
-  <h1>Giờ Chuẩn Giảng Dạy</h1>
+  <div class="logo-wrap" id="hdLogo"></div>
+  <div class="head-txt">
+    <h1>Giờ Chuẩn Giảng Dạy</h1>
+    <div class="sub" id="hdSub"></div>
+  </div>
   <select id="selNamHoc" title="Năm học"></select>
 </header>
 <main id="app"></main>
@@ -236,10 +257,16 @@ function defaultState(){
     dmGioChuan: JSON.parse(JSON.stringify(SEED_DINH_MUC)),
     dmHeSo: JSON.parse(JSON.stringify(SEED_HE_SO)),
     dmHD: JSON.parse(JSON.stringify(SEED_HOAT_DONG)),
+    truong: { ten: 'TRƯỜNG ĐẠI HỌC KỸ THUẬT - CÔNG NGHỆ CẦN THƠ', donVi: '', logo: null },
     namHoc: '2025-2026',
     nextId: 1000
   };
 }
+const DEFAULT_LOGO = `<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="24" cy="24" r="21" fill="none" stroke="#0a2f6b" stroke-width="3"/>
+  <circle cx="24" cy="24" r="15" fill="none" stroke="#1487e0" stroke-width="2"/>
+  <path d="M24 13v11l7.5 4.5" fill="none" stroke="#0a2f6b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
 function load(){
   try{
     const raw = localStorage.getItem(KEY);
@@ -338,6 +365,11 @@ function renderNamHoc(){
   $('#selNamHoc').innerHTML = namHocList()
     .map(n => `<option ${n===S.namHoc?'selected':''}>${n}</option>`).join('');
 }
+function renderHeader(){
+  $('#hdLogo').innerHTML = S.truong.logo
+    ? `<img src="${S.truong.logo}" alt="Logo trường">` : DEFAULT_LOGO;
+  $('#hdSub').textContent = S.truong.ten || '';
+}
 $('#selNamHoc').onchange = e => { S.namHoc = e.target.value; save(); render(); };
 
 const ICONS = {
@@ -382,9 +414,16 @@ function viewTongHop(){
   const gv = t.gv;
   const okGD = t.chenhLechGD >= 0, okNC = t.chenhLechNCKH >= 0;
   html += `<div class="card" id="printArea">
+    <div class="report-head">
+      ${S.truong.logo?`<img src="${S.truong.logo}" alt="Logo">`:''}
+      <div class="rh-truong">${esc(S.truong.ten)}</div>
+      ${S.truong.donVi?`<div class="rh-donvi">${esc(S.truong.donVi)}</div>`:''}
+      <div class="rh-title">BẢNG TỔNG HỢP GIỜ CHUẨN GIẢNG VIÊN</div>
+      <div class="rh-sub">Năm học ${esc(t.nam)}</div>
+    </div>
     <h2>${esc(gv.hoTen)} <span class="muted">(${esc(gv.ma)})</span></h2>
     <div class="muted">${esc(CHUC_DANH[gv.chucDanh]||gv.chucDanh)} · ${esc(TRINH_DO[gv.trinhDo]||gv.trinhDo)}
-      ${gv.khoa?(' · '+esc(gv.khoa)):''} — Năm học ${esc(t.nam)}</div>
+      ${gv.khoa?(' · '+esc(gv.khoa)):''}</div>
     ${t.ghiChu?`<div class="note">${esc(t.ghiChu)}</div>`:''}
     <div class="kpis">
       <div class="kpi blue"><div class="v">${fmt(t.tongGioGiangDay)}</div><div class="l">Tổng giờ giảng dạy<br>(định mức ${fmt(t.gioChuanGD)})</div></div>
@@ -400,6 +439,10 @@ function viewTongHop(){
     <div class="stat"><span>4. Nghiên cứu khoa học</span><b class="${okNC?'ok':'bad'}">${fmt(t.gioNCKH)} / ${fmt(t.gioChuanNCKH)}</b></div>
     <div class="stat"><span>5. Nhiệm vụ khác</span><b>${fmt(t.gioNhiemVuKhac)}</b></div>
     <div class="stat"><span><b>Tổng tất cả giờ quy đổi</b></span><b>${fmt(t.tongTatCa)}</b></div>
+    <div class="print-only">
+      <div><b>XÁC NHẬN CỦA ĐƠN VỊ</b></div>
+      <div>........., ngày ...... tháng ...... năm ......<br><b>NGƯỜI LẬP</b><br><br><br><br>${esc(gv.hoTen)}</div>
+    </div>
   </div>
   <div class="card no-print">
     <div class="row">
@@ -641,6 +684,19 @@ function viewCaiDat(){
   </tr>`).join('');
   return `
   <div class="card">
+    <h2>Trường & logo</h2>
+    <label>Tên trường (hiện trên tiêu đề và báo cáo)</label>
+    <input id="t_ten" value="${esc(S.truong.ten)}" onchange="saveTruong()">
+    <label>Khoa / đơn vị (tùy chọn)</label>
+    <input id="t_dv" value="${esc(S.truong.donVi)}" placeholder="VD: KHOA CÔNG NGHỆ THÔNG TIN" onchange="saveTruong()">
+    <div class="row" style="margin-top:12px">
+      <button class="btn secondary" onclick="$('#fileLogo').click()">🖼️ Tải logo trường lên</button>
+      ${S.truong.logo?'<button class="btn danger small" onclick="removeLogo()">Gỡ logo</button>':''}
+      <input type="file" id="fileLogo" accept="image/*" style="display:none" onchange="uploadLogo(this)">
+    </div>
+    <div class="muted" style="margin-top:8px">Tải file logo chính thức của trường (PNG/JPG/SVG, lấy từ website trường). Logo sẽ hiện trên đầu app và bảng tổng hợp khi in.</div>
+  </div>
+  <div class="card">
     <div class="row"><h2>Định mức giờ chuẩn</h2><button class="btn small right" onclick="formDinhMuc()">+ Thêm</button></div>
     <div class="tablewrap"><table><tr><th>Chức danh / Trình độ / Năm</th><th class="num">GD</th><th class="num">NCKH</th><th></th></tr>${dmRows}</table></div>
     <div class="muted" style="margin-top:6px">Sang năm học mới, bấm + Thêm để nhập định mức cho năm đó (hoặc sao chép số liệu cũ).</div>
@@ -769,6 +825,36 @@ function saveDmHD(id){
   save(); closeDlg(); render();
 }
 
+/* ====================== TRƯỜNG & LOGO ====================== */
+function saveTruong(){
+  S.truong.ten = $('#t_ten').value.trim();
+  S.truong.donVi = $('#t_dv').value.trim();
+  save(); renderHeader();
+}
+function uploadLogo(input){
+  const f = input.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    if(f.type === 'image/svg+xml' || f.size < 150000){
+      S.truong.logo = rd.result; save(); renderHeader(); render(); return;
+    }
+    // Ảnh lớn: thu nhỏ về tối đa 512px để tiết kiệm bộ nhớ
+    const img = new Image();
+    img.onload = () => {
+      const max = 512, k = Math.min(1, max / Math.max(img.width, img.height));
+      const cv = document.createElement('canvas');
+      cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+      S.truong.logo = cv.toDataURL('image/png');
+      save(); renderHeader(); render();
+    };
+    img.src = rd.result;
+  };
+  rd.readAsDataURL(f);
+  input.value = '';
+}
+function removeLogo(){ S.truong.logo = null; save(); renderHeader(); render(); }
+
 /* ====================== XUẤT / NHẬP DỮ LIỆU ====================== */
 function download(name, content, type){
   const a = document.createElement('a');
@@ -787,8 +873,10 @@ function importJSON(input){
     try{
       const s = JSON.parse(rd.result);
       if(!s.dmHD || !Array.isArray(s.gv)) throw 0;
+      const d = defaultState();
+      for(const k of Object.keys(d)) if(s[k]===undefined) s[k]=d[k];
       if(confirm('Phục hồi sẽ THAY THẾ toàn bộ dữ liệu hiện tại. Tiếp tục?')){
-        S = s; save(); renderNamHoc(); render(); alert('Đã phục hồi dữ liệu.');
+        S = s; save(); renderNamHoc(); renderHeader(); render(); alert('Đã phục hồi dữ liệu.');
       }
     }catch(e){ alert('File không hợp lệ.'); }
     input.value = '';
@@ -797,13 +885,15 @@ function importJSON(input){
 }
 function resetAll(){
   if(confirm('Xóa TOÀN BỘ dữ liệu và đưa về mặc định? (Nên sao lưu trước)') && confirm('Chắc chắn xóa?')){
-    S = defaultState(); save(); renderNamHoc(); render();
+    S = defaultState(); save(); renderNamHoc(); renderHeader(); render();
   }
 }
 function csvCell(v){ v = String(v ?? ''); return /[",;\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; }
 function exportCsvTongHop(){
   const t = tongHop(tongHopGvId, S.namHoc); if(!t) return;
   const L = [];
+  L.push(csvCell(S.truong.ten));
+  if(S.truong.donVi) L.push(csvCell(S.truong.donVi));
   L.push(['BẢNG TỔNG HỢP GIỜ CHUẨN', t.gv.hoTen, t.gv.ma, 'Năm học', t.nam].map(csvCell).join(','));
   L.push('');
   L.push('I. GIẢNG DẠY TRỰC TIẾP');
@@ -835,6 +925,7 @@ function render(){
   $('#app').innerHTML = views[tab]();
 }
 renderNamHoc();
+renderHeader();
 render();
 
 /* ====================== SERVICE WORKER (cài đặt lên điện thoại + offline) ====================== */
