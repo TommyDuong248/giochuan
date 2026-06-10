@@ -446,9 +446,11 @@ function viewTongHop(){
   </div>
   <div class="card no-print">
     <div class="row">
+      <button class="btn" onclick="exportExcelKeKhai()">📊 Xuất Excel kê khai</button>
       <button class="btn secondary" onclick="window.print()">🖨️ In / Lưu PDF</button>
-      <button class="btn secondary" onclick="exportCsvTongHop()">⬇️ Xuất CSV chi tiết</button>
+      <button class="btn secondary" onclick="exportCsvTongHop()">⬇️ Xuất CSV</button>
     </div>
+    <div class="muted" style="margin-top:8px">File Excel gồm các sheet: Phân công giờ chuẩn (M01), Giảng dạy LT-TH (M02), Kê khai hoạt động quy đổi, Tổng hợp (MTH) — đủ tất cả giảng viên trong năm học đang chọn.</div>
   </div>`;
   return html;
 }
